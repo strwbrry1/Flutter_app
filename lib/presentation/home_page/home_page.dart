@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/data/repositories/movie_repository.dart';
 import 'package:flutter_app/presentation/details_page/details_page.dart';
 import '../../domain/models/card.dart';
 part 'card.dart';
@@ -16,62 +17,69 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("Матвиенко С.Д. ПИбд-33"),
-      ),
-      body: Center(child: const Body()),
+    return const Scaffold(
+      body: Center(child: Body()),
     );
   }
 }
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   const Body({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final data = [
-      CardData(
-        "text",
-        description: "hello",
-        icon: Icons.skateboarding_outlined,
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Manul_Timofey_in_April_2025_%281%2C_cropped%29.jpg/330px-Manul_Timofey_in_April_2025_%281%2C_cropped%29.jpg',
-      ),
-      CardData(
-        "test",
-        description: "world",
-        icon: Icons.wifi,
-        imageUrl:
-            'https://static.mk.ru/upload/entities/2024/09/27/06/articles/facebookPicture/1d/39/cc/b7/8e98fb7312647c5aaf958cae41c94691.jpg',
-      ),
-      CardData(
-        "something",
-        description: "send help",
-        icon: Icons.sos,
-        imageUrl:
-            'https://cs9.pikabu.ru/post_img/2017/08/27/4/og_og_1503809823210718041.jpg',
-      ),
-    ];
+  State<Body> createState() => _BodyState();
+}
 
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: data
-              .map(
-                (data) => _Card.fromData(
-                  data,
-                  onLike: (String title, bool isLiked) =>
-                      _showSnackbar(context, title, isLiked),
-                  onTap: () => _navToDetails(context, data),
+class _BodyState extends State<Body> {
+  final searchController = TextEditingController();
+  late Future<List<CardData>?> data;
+
+  final repo = MovieRepository();
+
+  @override
+  void initState() {
+    data = repo.loadData();
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: CupertinoSearchTextField(
+              controller: searchController,
+              onSubmitted: (search) {
+                setState(() {
+                  data = MovieRepository().loadData(q: search);
+                });
+              },
+            )
+          ),
+          Expanded(
+            child: Center(
+              child: FutureBuilder<List<CardData>?>(
+                future: data,
+                builder: (context, snapshot) => SingleChildScrollView(
+                  child: snapshot.hasData ? Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: snapshot.data?.map(
+                      (data) { return _Card.fromData(
+                        data,
+                        onLike: (String title, bool isLiked) =>
+                            _showSnackbar(context, title, isLiked),
+                        onTap: () => _navToDetails(context, data),
+                      );
+                    }).toList() ?? [],
+                  ) : const CircularProgressIndicator(),
                 ),
-              )
-              .toList(),
-        ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -88,7 +96,7 @@ class Body extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            "Manul $title ${isLiked ? "is liked!" : "unliked :["}",
+            "Movie $title ${isLiked ? "is liked!" : "unliked :["}",
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           backgroundColor: Colors.orangeAccent,
