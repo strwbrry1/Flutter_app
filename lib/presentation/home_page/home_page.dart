@@ -96,7 +96,7 @@ class _BodyState extends State<Body> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            "Movie $title ${isLiked ? "is liked!" : "unliked :["}",
+            "Title $title ${isLiked ? "is liked!" : "unliked :["}",
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           backgroundColor: Colors.orangeAccent,
