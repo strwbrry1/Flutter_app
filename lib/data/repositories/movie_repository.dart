@@ -22,13 +22,14 @@ class MovieRepository extends ApiInterface {
         url = '$_baseUrl/titles';
       }
       else {
-        url = '$_baseUrl/search/titles?query=$q&limit=25';
+        final encodedQuery = Uri.encodeQueryComponent(q);
+        url = '$_baseUrl/search/titles?query=$encodedQuery';
       }
       final Response<dynamic> response = await _dio.get<Map<dynamic, dynamic>>(url);
 
       final MoviesDto dto = MoviesDto.fromJson(response.data as Map<String, dynamic>);
       final List<CardData>? data = dto.titles?.map((e) => e.toDomain()).toList();
-      final List<CardData>? trimmed = data?.sublist(0, 20);
+      final List<CardData>? trimmed = data?.take(20).toList();
       return trimmed;
     } on DioException catch(e) {
       onError?.call(e.response?.statusMessage);

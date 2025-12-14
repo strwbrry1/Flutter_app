@@ -54,7 +54,7 @@ class _BodyState extends State<Body> {
               controller: searchController,
               onSubmitted: (search) {
                 setState(() {
-                  data = MovieRepository().loadData(q: search);
+                  data = repo.loadData(q: search);
                 });
               },
             )
