@@ -7,10 +7,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../../domain/models/card.dart';
 
 class MovieRepository extends ApiInterface {
-  static final Dio _dio = Dio()..interceptors.add(PrettyDioLogger(
-    requestHeader: true,
-    requestBody: true,
-  ));
+  static final Dio _dio = Dio()
+    ..interceptors.add(PrettyDioLogger(requestHeader: true, requestBody: true));
 
   static const String _baseUrl = 'https://api.imdbapi.dev';
 
@@ -18,10 +16,9 @@ class MovieRepository extends ApiInterface {
   Future<List<CardData>?> loadData({String? q, OnErrorCallback? onError}) async {
     try {
       String url = '';
-      if (q == null){
+      if (q == null || q.isEmpty) {
         url = '$_baseUrl/titles';
-      }
-      else {
+      } else {
         final encodedQuery = Uri.encodeQueryComponent(q);
         url = '$_baseUrl/search/titles?query=$encodedQuery';
       }
@@ -31,7 +28,7 @@ class MovieRepository extends ApiInterface {
       final List<CardData>? data = dto.titles?.map((e) => e.toDomain()).toList();
       final List<CardData>? trimmed = data?.take(20).toList();
       return trimmed;
-    } on DioException catch(e) {
+    } on DioException catch (e) {
       onError?.call(e.response?.statusMessage);
       return null;
     }

@@ -5,8 +5,9 @@ String _placeholderImg = 'https://commons.wikimedia.org/wiki/File:A_Specimen_by_
 
 extension MovieDataDtoToModel on MovieDataDto {
   CardData toDomain() => CardData(
-    primaryTitle!,
-    description: startYear!.toString(),
+    primaryTitle ?? "Неизвестен - без названия",
+    description: startYear == null ? "0001" : startYear.toString(),
     imageUrl: imageData?.url ?? _placeholderImg,
+    id: id
   );
 }

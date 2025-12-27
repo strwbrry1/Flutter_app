@@ -3,5 +3,6 @@ abstract class HomeEvent {
 }
 
 class HomeLoadDataEvent extends HomeEvent {
-  const HomeLoadDataEvent();
+  final String? search;
+  const HomeLoadDataEvent({this.search});
 }

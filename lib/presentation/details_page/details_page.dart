@@ -18,15 +18,9 @@ class DetailsPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 4),
-            child: Text(
-              cardData.text,
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
+            child: Text(cardData.text, style: Theme.of(context).textTheme.headlineLarge),
           ),
-          Text(
-            cardData.description,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
+          Text(cardData.description, style: Theme.of(context).textTheme.bodyMedium),
         ],
       ),
     );

@@ -13,7 +13,7 @@ class MoviesDto {
 
 @JsonSerializable(createToJson: false)
 class MovieDataDto {
-  final String? id;
+  final String id;
   final String? type;
   final String? primaryTitle;
   final int? startYear;
@@ -21,7 +21,14 @@ class MovieDataDto {
   @JsonKey(name: "primaryImage")
   final MovieImageDto? imageData;
 
-  const MovieDataDto({this.id, this.type, this.primaryTitle, this.startYear, this.plot, this.imageData});
+  const MovieDataDto({
+    required this.id,
+    this.type,
+    this.primaryTitle,
+    this.startYear,
+    this.plot,
+    this.imageData,
+  });
   factory MovieDataDto.fromJson(Map<String, dynamic> json) => _$MovieDataDtoFromJson(json);
 }
 
@@ -33,5 +40,4 @@ class MovieImageDto {
 
   const MovieImageDto(this.url, this.width, this.height);
   factory MovieImageDto.fromJson(Map<String, dynamic> json) => _$MovieImageDtoFromJson(json);
-
 }
